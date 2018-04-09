@@ -1,4 +1,4 @@
-
+package mapaBitsLCD;
 
 public class ListaDE {
 //	necesito un metodo para cambiar el tipo de dato que va a manejar la lista
@@ -17,14 +17,10 @@ public class ListaDE {
 	public int cantidad() {
 		int cuantos = 0;
 		Nodo actual = cabeza;
-		if(cabeza != null) {
-			while(actual != null) {
-				actual = actual.siguiente;
-				cuantos++;
-			}
-		}else if(cabeza == null)
-			cuantos = 0;
-			
+		while(actual != null) {
+			actual = actual.siguiente;
+			cuantos++;
+		}
 		return cuantos;
 	}
 	
@@ -46,6 +42,11 @@ public class ListaDE {
 					actual.siguiente = nuevo;
 					nuevo.anterior = actual;
 					nuevo.siguiente = null;
+					/*
+					 * actual.siguiente = nuevo;
+					nuevo.anterior = actual;
+					nuevo.siguiente = null;
+					 */
 				}else {
 					Nodo actual = cabeza;
 					for(int i = 0;i <= indice-1;i ++)
@@ -57,29 +58,25 @@ public class ListaDE {
 					proximo.anterior = nuevo;
 				}
 			}
-		}
-		
+		}	
 	}
 	
 	public Object getElemento(int indice) {//////////
-		Object elemento;
-		if(indice <= cantidad()-1) {
-			Nodo actual;
-			actual = cabeza;
-			for(int i = 0;i <= indice-1;i ++)
-				actual = actual.siguiente;
-			elemento = actual.objeto;
-			Nodo proximo = actual.siguiente;
-			actual.siguiente = proximo.siguiente;
-			Nodo next = proximo.siguiente;
-			if(next != null)
-				next.anterior = actual;
-			elemento = proximo.objeto;
-			
+		if(indice <= cantidad()) {
+			Object elemento;
+			if(indice == 0) {
+				elemento = cabeza.objeto;
+			}else {
+				Nodo actual;
+				actual = cabeza;
+				for(int i = 0;i <= indice-1;i ++)
+					actual = actual.siguiente;
+				elemento = actual.objeto;
+			}
 			return elemento;
 		}else 
 			return null;
-		
+	
 	}
 
 	
@@ -89,8 +86,8 @@ public class ListaDE {
 			if(indice == 1) {
 				elemento = cabeza.objeto;
 //				cabeza = cabeza.siguiente;
-				if(cabeza != null)
-					cabeza.anterior = null;
+//				if(cabeza != null)
+//					cabeza.anterior = null;
 			}else {
 				Nodo actual;
 				actual = cabeza;
@@ -110,14 +107,8 @@ public class ListaDE {
 			return null;
 	}
 	
-	public void limpiar() {
-		cabeza = null;
-		cabeza.anterior = null;
-		
-	}
-	
 	public void borrar(int indice) {
-		if(indice < cantidad()) {
+		if(indice <= cantidad()) {
 			if(indice == 1) {
 				cabeza = cabeza.siguiente;
 				if(cabeza != null)
@@ -126,10 +117,9 @@ public class ListaDE {
 				Nodo actual = cabeza;
 				for(int i = 0;i <= indice-1;i ++)
 					actual = actual.siguiente;
-				cabeza = cabeza.siguiente;
-//				Nodo proximo = actual.siguiente;
-//				proximo = proximo.siguiente;
-//				actual.anterior = proximo;
+				Nodo proximo = actual.siguiente;
+				proximo.anterior = actual.anterior;
+//				actual.siguiente = proximo;
 //				if(proximo != null)
 //					proximo.anterior = actual;
 			}

@@ -1,58 +1,83 @@
+package pantallaJuego;
+
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
+
+import Inicio.Main;
+import balasJugador.ArmaJugador;
+import powerUP.EscudoBasico;
+
 
 
 public class Jugador implements KeyListener{
 	
-	private final int velocidad = 5;
+	private final double velocidad = 5.0d;
+	
 	private BufferedImage jAnimacion;
 	private Rectangle rectangulo;
 	private double JxPos, JyPos;
 	private int Jwidth, Jheight;
-//	private Animacion animacion;
-	@SuppressWarnings("unused")
-	private Escudo escudo;
-		
+	
+	private EscudoBasico escudo;
 	
 	
-	private boolean izquierda = false, derecha = false;
+	private boolean izquierda = false, derecha = false, disparo = false;
 	
-
+	public ArmaJugador armaJugador;
 	
 	private boolean powerUP;
 		
 	
 //	metodo constructor
-	public Jugador(double JxPos,double JyPos,int Jwidth,int Jheight) {
+	public Jugador(double JxPos, double JyPos, int Jwidth, int Jheight,EscudoBasico escudo,boolean powerUp) {
 		this.JxPos = JxPos;
 		this.JyPos = JyPos;
 		this.Jwidth = Jwidth;
 		this.Jheight = Jheight;
-		new Animacion((int)JxPos,(int)JyPos,Jwidth,Jheight,"/imagenes/player.png");
+		setPowerUpJ(powerUp);
 		
-		rectangulo = new Rectangle((int)JxPos,(int)JyPos,Jwidth,Jheight);
+		rectangulo = new Rectangle((int)JxPos,(int)JyPos + 25,Jwidth,Jheight - 25);
 		
+		try {
+			URL url = this.getClass().getResource("/imagenes/Player.png");
+			jAnimacion = ImageIO.read(url);
+		}catch(IOException e) {};
+		
+		this.escudo = escudo;
+		
+		
+		armaJugador = new ArmaJugador();
+		armaJugador.setPowerUPA(isPowerUpJ());
 	}
 	
 	public void dibujarJugador(Graphics2D g) {
-		g.drawImage(jAnimacion,(int)JxPos,(int)JyPos, Jwidth, Jheight, null);
-
+		g.drawImage(jAnimacion, (int)JxPos, (int)JyPos, Jwidth, Jheight, null);
+		armaJugador.dibujarArma(g);
 	}
 	
 	public void actualizarJugador(double cambioJ) {
 		
 //		Permite que el movimiento del jugador sea dentro de la ventana
-		if(derecha && !izquierda && JxPos < Facade.WIDTH-Jwidth) {
+		if(derecha && !izquierda && JxPos < Main.WIDTH-Jwidth-26) {
 			JxPos += velocidad * cambioJ;
 			rectangulo.x = (int)JxPos;
 		}if(!derecha && izquierda && JxPos > 10) {
 			JxPos -= velocidad * cambioJ;
 			rectangulo.x = (int)JxPos;
 		}
-
+		
+		armaJugador.actualizarArma(cambioJ, escudo);
+		
+		if(disparo) {
+			armaJugador.dispararBala(JxPos, JyPos, 5, 5);
+		}
 	}
 	
 	public boolean isPowerUpJ() {
@@ -71,10 +96,10 @@ public class Jugador implements KeyListener{
 			derecha = true;
 		}else if(tecla == KeyEvent.VK_X || tecla == KeyEvent.VK_LEFT) {
 			izquierda = true;
-			System.out.println("xxx");
 		}
-
-		
+		if(tecla == KeyEvent.VK_SPACE || tecla == KeyEvent.VK_Z) {
+			disparo = true;
+		}
 	}
 
 	@Override
@@ -86,11 +111,16 @@ public class Jugador implements KeyListener{
 		}else if(tecla == KeyEvent.VK_X || tecla == KeyEvent.VK_LEFT) {
 			izquierda = false;
 		}
-
+		if(tecla == KeyEvent.VK_SPACE || tecla == KeyEvent.VK_Z) {
+			disparo = false;
+		}
+		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
+		
+		
 	}
 
 	public Rectangle getRectangulo() {
@@ -100,5 +130,5 @@ public class Jugador implements KeyListener{
 	public void setRectangulo(Rectangle rectangulo) {
 		this.rectangulo = rectangulo;
 	}
-}
 
+}

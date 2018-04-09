@@ -1,19 +1,22 @@
+package powerUP;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
+import java.util.ArrayList;
 
+import Inicio.Main;
 
-public class Escudo {
-
-	public ListaDE barrera = new ListaDE();
+public class EscudoBasico {
+	
+	public ArrayList<Rectangle>barrera = new ArrayList<Rectangle>();
 	
 //	genera la cantidad de escudos
-	public Escudo(boolean powerUp) {
+	public EscudoBasico(boolean powerUp) {
 		if(powerUp) {
-			escudoBasico(((Facade.WIDTH)/2)-350,450);
-			escudoBasico(((Facade.WIDTH)/2),400);
-			escudoBasico(((Facade.WIDTH)/2)+350,450);
+			escudoBasico(((Main.WIDTH)/2)-350,450);
+			escudoBasico(((Main.WIDTH)/2),400);
+			escudoBasico(((Main.WIDTH)/2)+350,450);
 		}
 	}
 	
@@ -33,43 +36,29 @@ public class Escudo {
 				yES = (i * 3);
 			}
 		}
-		
-/*
-		
-//		Lado izquierdo
-		for(int i = 0;i < 5;i++) {
-			fila(8 + anchoBarrera - i,ESxPos - xES,(ESyPos + yES) + (i * 3));
-		}
-		
-//		Lado derecho
-		for(int i = 0;i < 5;i++) {
-			fila(8 + anchoBarrera - i,(ESxPos - xES +(14 * 3)) + (i * 3),(ESyPos + yES) + (i * 3));
-		}
-*/
-		
 	}
 	
 		
 	public void dibujarEscudo(Graphics2D g) {
 		g.setColor(Color.MAGENTA.brighter());
-		for(int i = 0;i < barrera.cantidad();i++) {
-			g.fill((Shape) barrera.getElemento(i));
+		for(int i = 0;i < barrera.size();i++) {
+			g.fill(barrera.get(i));
 		}
 	}
 	
 	public void fila(int filas,int FxPos,int FyPos) {
 		for(int i = 0;i < filas;i++) {
 			Rectangle ladrillo = new Rectangle(FxPos + (i * 3),FyPos,3,3);
-			barrera.insertar(1, ladrillo);;
+			barrera.add(ladrillo);
 		}
 	}
 	
 	public void restablecerEscudo() {
-		barrera.limpiar();
+		barrera.clear();
 		
-		escudoBasico(((Facade.WIDTH)/2)-350,450);
-		escudoBasico(((Facade.WIDTH)/2),400);
-		escudoBasico(((Facade.WIDTH)/2)+350,450);
+		escudoBasico(((Main.WIDTH)/2)-350,450);
+		escudoBasico(((Main.WIDTH)/2),400);
+		escudoBasico(((Main.WIDTH)/2)+350,450);
 		
 	}
 }

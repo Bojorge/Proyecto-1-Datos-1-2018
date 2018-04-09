@@ -1,52 +1,68 @@
+package mapaBitsLCD;
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+
 import javax.imageio.ImageIO;
+
+import temporizador.Temporizador;
 
 
 public class Animacion {
 	
-	private ListaDE animaciones = new ListaDE(); // Lista doblemente enlazada
+	private ListaDE animaciones = new ListaDE();
 	private byte animacionActual;
+	
 	private boolean bucleAS = false;
 	private boolean jugar = false;
 	private boolean destruirDespuesDeLaAnimacion = false;
+	
 	private Temporizador timer;
 	private int velocidadAnimacion;
-	private int AnimxPos, AnimyPos;
-	private int AnimAncho, AnimAltura;
+	private double ASxPos, ASyPos;
+	private int ASwidth, ASheight;
+	
 	private int limiteBalEn;
 	
-//	constructor: recibe posicion, tamaño e imagen para construir al jugador y enemigos
-	public Animacion(int AnimxPos,int AnimyPos,int Filas,int Columnas, String imgRuta) {
-		
-		this.AnimxPos = AnimxPos;
-		this.AnimyPos = AnimyPos;
-		this.AnimAncho = Filas;
-		this.AnimAltura = Columnas;
+	public Animacion(double ASxPos,double ASyPos,int ASfilas,int AScolumnas,int velocidadAnimacion, String imgRuta) {
+		this.velocidadAnimacion = velocidadAnimacion;
+		this.ASxPos = ASxPos;
+		this.ASyPos = ASyPos;
 		
 		try {
 			URL url = this.getClass().getResource(imgRuta);
 			BufferedImage jAnimacion = ImageIO.read(url);
-			int AnimAncho = jAnimacion.getWidth(); 
-			int AnimLargo = jAnimacion.getHeight();
-			addAnimacion(jAnimacion,AnimAncho,AnimLargo,AnimAncho,AnimLargo);
+			int AnimAncho = jAnimacion.getWidth() / AScolumnas;
+			int AnimLargo = jAnimacion.getHeight() / ASfilas;
+			for(int y = 0;y < ASfilas;y++) {
+//				le da el efecto de movimiento a los enemigos y el tamaño
+				for(int x = 0;x < AScolumnas; x++) {
+					addAnimacion(jAnimacion
+							, 0 + (x * AnimAncho)
+							, 0 + (y * AnimLargo)
+							, AnimAncho
+							, AnimLargo);  
+				}
+			} 
+			
+		
 		}catch(IOException e) {};
 		
 		timer = new Temporizador();
-
+		
+		limiteBalEn = animaciones.cantidad() - 1;
 	}
 	
-//	Si la lista NO esta vacia ( seDestruyeAnimacion() ) entonces toma "animacionActual" como indice en la lista para dibujarlo
 	public void dibujarAS(Graphics2D g) {
 		if(seDestruyeAnimacion())
 			return;
-		g.drawImage((Image)animaciones.getElemento(animacionActual), (int)getASxPos(), (int)getASyPos(),AnimAncho,AnimAltura, null);
+		
+		g.drawImage((Image)animaciones.getElemento(animacionActual), (int)getASxPos(), (int)getASyPos(),ASwidth,ASheight, null);
 	}
 	
-//	Mantiene actualizada la animacion
 	public void actualizarAS(double cambioAS) {
 		if(seDestruyeAnimacion())
 			return;
@@ -62,7 +78,6 @@ public class Animacion {
 		jugar = false;
 	}
 	
-//	Restaura la animacion
 	public void resetMapaBits() {
 		bucleAS = false;
 		jugar = false;
@@ -70,40 +85,27 @@ public class Animacion {
 	}
 	
 	private void bucleAnimacion() {
-		if(timer.temporizadorListo(velocidadAnimacion) && animacionActual != animaciones.cantidad()-1) {
+		if(timer.temporizadorListo(velocidadAnimacion) && animacionActual == limiteBalEn) {
 			animacionActual = 0;
 			timer.resetTemporizador();
-		}else if(timer.tiempoEvento(velocidadAnimacion) && animacionActual == animaciones.cantidad()-1) {
+		}else if(timer.tiempoEvento(velocidadAnimacion) && animacionActual != limiteBalEn) {
 			animacionActual++;
-		} 	
+		} 
+		
 	}
 	
 	private void juegoAnimacion() {
-		if(timer.temporizadorListo(velocidadAnimacion) && animacionActual != animaciones.cantidad()-1 && !esDestruidoDespuesDeLaAnimacion()) {//!esDestruidoDespuesDeLaAnimacion()
+		if(timer.temporizadorListo(velocidadAnimacion) && animacionActual != limiteBalEn && !esDestruidoDespuesDeLaAnimacion()) {
 			jugar = false;
 			animacionActual = 0;
-		} else if(timer.tiempoEvento(velocidadAnimacion) && animacionActual == animaciones.cantidad()-1 && esDestruidoDespuesDeLaAnimacion()) {//esDestruidoDespuesDeLaAnimacion()
+		} else if(timer.tiempoEvento(velocidadAnimacion) && animacionActual == limiteBalEn && esDestruidoDespuesDeLaAnimacion()) {
 			animaciones = null;
-		}else if(timer.tiempoEvento(velocidadAnimacion) && animacionActual != animaciones.cantidad()-1) {
+		}else if(timer.tiempoEvento(velocidadAnimacion) && animacionActual != limiteBalEn) {
 			animacionActual++;
 		}
 	}
 	
-	public void AnimacionJugador(boolean jugar,boolean destruirDespuesDeLaAnimacion) {
-		if(bucleAS) {
-			bucleAS = false;
-		}
-		this.jugar = jugar;
-		this.setDestruidoDespuesDeLaAnimacion(destruirDespuesDeLaAnimacion);	
-	}
 	
-//	Es verdadero si la lista esta vacia
-	public boolean seDestruyeAnimacion() {
-		if(animaciones==null)
-			return true;
-		
-		return false;
-	}
 	
 	public byte getAnimacionActual() {
 		return animacionActual;
@@ -120,6 +122,13 @@ public class Animacion {
 	public void setBucleAS(boolean bucleAS) {
 		this.bucleAS = bucleAS;
 	}
+
+	public boolean seDestruyeAnimacion() {
+		if(animaciones == null)
+			return true;
+		
+		return false;
+	}
 	
 	public boolean esDestruidoDespuesDeLaAnimacion() {
 		return destruirDespuesDeLaAnimacion;
@@ -133,43 +142,46 @@ public class Animacion {
 		animaciones.insertar(1,spriteMap.getSubimage(AxPos, AyPos, ancho, alto));
 	}
 	
-//	Restaura el limite bala-enemigo (han dejado de estar en la misma pocision)
-	public void resetLimiteBalEn() {
-		limiteBalEn = animaciones.cantidad() - 1;
-	}
-	
-//	SETTER´s  /  GETTER´s
-	
-	public double getASxPos() {
-		return AnimxPos;
+	public void AnimacionJugador(boolean jugar,boolean destruirDespuesDeLaAnimacion) {
+		if(bucleAS) {
+			bucleAS = false;
+		}
+		
+		this.jugar = jugar;
+		this.setDestruidoDespuesDeLaAnimacion(destruirDespuesDeLaAnimacion);
+		
 	}
 
-	public void setASxPos(int aSxPos) {
-		AnimxPos = aSxPos;
+	public double getASxPos() {
+		return ASxPos;
+	}
+
+	public void setASxPos(double aSxPos) {
+		ASxPos = aSxPos;
 	}
 
 	public double getASyPos() {
-		return AnimyPos;
+		return ASyPos;
 	}
 
-	public void setASyPos(int ASyPos) {
-		this.AnimyPos = ASyPos;
+	public void setASyPos(double ASyPos) {
+		this.ASyPos = ASyPos;
 	}
 
 	public int getASwidth() {
-		return AnimAncho;
+		return ASwidth;
 	}
 
 	public void setASwidth(int aSwidth) {
-		AnimAncho = aSwidth;
+		ASwidth = aSwidth;
 	}
 
 	public int getASheight() {
-		return AnimAltura;
+		return ASheight;
 	}
 
 	public void setASheight(int aSheight) {
-		AnimAltura = aSheight;
+		ASheight = aSheight;
 	}
 
 	public int getVelocidadAnimacion() {
@@ -190,6 +202,11 @@ public class Animacion {
 		}else {
 			this.limiteBalEn = limiteBalEn;
 		}
+	
+	}
+	
+	public void resetLimiteBalEn() {
+		limiteBalEn = animaciones.cantidad() - 1;
 	}
 
 	public boolean isJugar() {
@@ -200,4 +217,3 @@ public class Animacion {
 		this.jugar = jugar;
 	}
 }
-
