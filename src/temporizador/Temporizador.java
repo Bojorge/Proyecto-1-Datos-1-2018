@@ -1,37 +1,41 @@
 package temporizador;
 
 public class Temporizador {
+
+	private long TiempoPrevio;
 	
-	private long tiempoPrevio;
-	
-	public Temporizador() {
+	public Temporizador(){
 		setTiempoPrevio(System.currentTimeMillis());
 	}
 
 	public long getTiempoPrevio() {
-		return tiempoPrevio;
+		return TiempoPrevio;
 	}
 
-	public void setTiempoPrevio(long tiempoPrevio) {
-		this.tiempoPrevio = tiempoPrevio;
+	public void setTiempoPrevio(long currentTime) {
+		this.TiempoPrevio = currentTime;
 	}
 	
-	public void resetTemporizador() {
-		tiempoPrevio = System.currentTimeMillis();
+	public void resetTemporizador(){
+		TiempoPrevio = System.currentTimeMillis();
 	}
 	
-	public boolean tiempoEvento(int timer) {
-		if(System.currentTimeMillis() - getTiempoPrevio() > timer) {
+	public boolean tiempoEvento(int tempo){
+		if(System.currentTimeMillis() - getTiempoPrevio() > tempo){
 			resetTemporizador();
 			return true;
 		}
+		
 		return false;
 	}
 	
-	public boolean temporizadorListo(int timer) {
-		if(System.currentTimeMillis() - getTiempoPrevio() > timer) {
+	public boolean temporizadorListo(int timer){
+		if(System.currentTimeMillis() - getTiempoPrevio() > timer){
 			return true;
 		}
+		
 		return false;
 	}
+	
+	
 }

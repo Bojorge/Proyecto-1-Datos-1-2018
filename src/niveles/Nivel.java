@@ -1,145 +1,128 @@
 package niveles;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
-import Inicio.Main;
-import mapaBitsLCD.ListaDE;
-import pantallaJuego.Jugador;
-import powerUP.EscudoBasico;
-import tiposDeEnemigo.Jefe;
-import tiposDeEnemigo.TipoDeEnemigo;
-import tiposDeEnemigo.TipoEnemigoBasico;
+//import animacion.ListaDE;
+import armas.GestorBalaEnemigo;
+import enemigos.EnemigoBasico;
+import enemigos.TipoDeEnemigo;
+import jugador.Jugador;
+import powerUp.Escudo;
+import sonido.Sonido;
 
-public class Nivel implements SuperNivel{
-	
-private Jefe jefe;
-	
+public class Nivel implements NivelPadre{
+
 	private Jugador jugador;
-	private ListaDE enEmigos = new ListaDE();
+	private ArrayList<TipoDeEnemigo> enemigos = new ArrayList<TipoDeEnemigo>();
+//	private ListaDE enemigos = new ListaDE();
+	private GestorBalaEnemigo gestorBalaEnemigo;
 	
-	private int dificultad;
+	private Sonido beep, boop;
+	private boolean beepboop;
 	
-	public Nivel(Jugador jugador, int dificultad) {
+	public Nivel(Jugador jugador, GestorBalaEnemigo gestorBalaEnemigo){
 		this.jugador = jugador;
-		setDificultadN(dificultad);
+		this.gestorBalaEnemigo = gestorBalaEnemigo;
+		addEnemigos();
 		
-		for(int i = 0;i < getDificultadN();i ++) {
-			hileras(getDificultadN());
-			
-		}
-		
-		
-		
-		
-		
-//		Cantidad y posicion de los enemigos que se van ingresando al array. Crea hileras
-//		for(int y = 0;y < getDificultadN(); y++) {
-			
-//			for(int x = 0;x < 10; x++) {
-				
-//				TipoDeEnemigo ufo = new TipoEnemigoBasico(300 + (x * 50), 10 + (y * 50),25,25,"/imagenes/ufo.png");
-//				enEmigos.add(ufo);
-//			}
-//		}
-		
+		beep = new Sonido("/sonidos/beep.wav");
+		boop = new Sonido("/sonidos/boop.wav");
 	}
 	
-//	Cantidad, tamaño, imagen y posicion de los enemigos que se van ingresando al array. Crea hileras
-	public void hileras(int dificultad) {
-//		String TipoEnemImg;
-		
-//			TipoEnemImg = "/imagenes/ufo.png";
-		jefe = new Jefe((Main.WIDTH)-400, 30,1,2,"/imagenes/ufi.png");
-		enEmigos.insertar(1,jefe);
-
-		for(int y = 0;y < getDificultadN(); y++) {
-			
-			for(int x = 0;x < 10; x++) {
-				if(dificultad ==1) {
-				TipoDeEnemigo ufo = new TipoEnemigoBasico(300 + (x * 50), 10 + (y * 50),25,25);
-				enEmigos.insertar(1,ufo);
-				}
-				else if(dificultad ==2) {
-					TipoDeEnemigo ufo = new TipoEnemigoBasico(300 + (x * 30), 0 + (y * 50),1,2);
-					enEmigos.insertar(1,ufo);
-				}
-			}
-		}
-	}
-	
-	
-	
-
 	@Override
-	public void dibujarSupNiv(Graphics2D g) {
-		if(enEmigos == null)
+	public void dibujarNivPad(Graphics2D g) {
+		if(enemigos == null)
 			return;
-//		Se dibuja cada enemigo existente en el Array
-		for(int i = 0; i < enEmigos.cantidad(); i++) {
-			((TipoDeEnemigo) enEmigos.getElemento(i)).dibujarTipoEnem(g);
+		
+		for(int i = 0; i < enemigos.size(); i++){
+//		for(int i = 0; i < enemigos.cantidad(); i++){
+			enemigos.get(i).dibujarTipEn(g);
+//			((TipoDeEnemigo) enemigos.getElemento(i)).dibujarTipEn(g);
 		}
+		gestorBalaEnemigo.dibujarBalaEnem(g);
 	}
 
 	@Override
-	public void actualizarSupNiv(double SNcambio, EscudoBasico escudo) {
-		if(enEmigos == null)
+	public void actualizarNivPad(double cambio, Escudo escudo) {
+		if(enemigos == null)
 			return;
 		
-		for(int i = 0; i < enEmigos.cantidad(); i++) {
-			((TipoDeEnemigo) enEmigos.getElemento(i)).actualizarTipoEnem(SNcambio, jugador, escudo);
+		for(int i = 0; i < enemigos.size(); i++){
+			enemigos.get(i).actualizarTipEn(cambio, jugador, escudo);
+//		for(int i = 0; i < enemigos.cantidad(); i++){
+//			((TipoDeEnemigo) enemigos.getElemento(i)).actualizarTipEn(cambio, jugador, escudo);
 		}
-		for(int i = 0; i < enEmigos.cantidad(); i++) {
-			((TipoDeEnemigo) enEmigos.getElemento(i)).choque(i, jugador, escudo, enEmigos);
+		for(int i = 0; i < enemigos.size(); i++){
+			enemigos.get(i).colisionBalaVRSenem(i, jugador, escudo, enemigos);
+//		for(int i = 0; i < enemigos.cantidad(); i++){
+//			((TipoDeEnemigo) enemigos.getElemento(i)).colisionBalaVRSenem(i, jugador, escudo, enemigos);
 		}
-		
-		haCambiadoLaDireccion(SNcambio);
-
+		haCambiadoLaDireccion(cambio);
+		gestorBalaEnemigo.actualizarBalaEnem(cambio, escudo, jugador);
 	}
 
 	@Override
-	public void haCambiadoLaDireccion(double SNcambio) { 
-		if(enEmigos == null)
+	public void haCambiadoLaDireccion(double cambio) {
+		if(enemigos == null)
 			return;
 		
-		for(int i = 0; i < enEmigos.cantidad(); i++) {
-			if(((TipoDeEnemigo) enEmigos.getElemento(i)).estaFueraDelLimite()) {
-				cambiarDireccionDeEnemigos(SNcambio);
+		for(int i = 0; i < enemigos.size(); i++){
+			if(enemigos.get(i).salioDelLimite()){
+//		for(int i = 0; i < enemigos.cantidad(); i++){
+//			if(((TipoDeEnemigo) enemigos.getElemento(i)).salioDelLimite()){
+				cambiaDireccionDeTodosLosEnemigos(cambio);
 			}
 		}
 	}
 
 	@Override
-	public void cambiarDireccionDeEnemigos(double SNcambio) {
-		for(int i = 0; i < enEmigos.cantidad(); i++) {
-			((TipoDeEnemigo) enEmigos.getElemento(i)).cambiarDireccion(SNcambio);
+	public void cambiaDireccionDeTodosLosEnemigos(double cambio) {
+		for(int i = 0; i < enemigos.size(); i++){
+			enemigos.get(i).cambiarDireccion(cambio);
+//		for(int i = 0; i < enemigos.cantidad(); i++){
+//			((TipoDeEnemigo) enemigos.getElemento(i)).cambiarDireccion(cambio);
+		}
+		if (beepboop) {
+			beepboop = false;
+			boop.playSonido();
+		} else {
+			beepboop = true;
+			beep.playSonido();
 		}
 	}
 
 	@Override
-	public boolean seTerminoJuego() {
-		return false;
+	public boolean haPerdidoElJuego() {
+		return jugador.getVidas() <= 0;
 	}
 
 	@Override
-	public void destroy() {
+	public void destruirNivPad() {
 		
 	}
 
 	@Override
-	public void reset() {
+	public void resetNivPad() {
+		jugador.resetJugador();
+		enemigos.clear();
+//		enemigos.borrarTodo();
+		addEnemigos();
 		
-	}
-
-
-
-	public int getDificultadN() {
-		return dificultad;
-	}
-
-
-
-	public void setDificultadN(int dificultad) {
-		this.dificultad = dificultad;
+		gestorBalaEnemigo.resetGBE();
 	}
 	
+	public void addEnemigos() {
+			for(int x = 0; x < 11; x++){
+				TipoDeEnemigo e = new EnemigoBasico(150 + (x * 60), 27, 1 , 2, gestorBalaEnemigo);
+				enemigos.add(e);
+//				enemigos.insertar(1,e);
+			}
+	}
+
+	@Override
+	public boolean haCompletadoElNivel() {
+		return enemigos.isEmpty();
+//		return enemigos.vaciaEsta();
+	}
 }
