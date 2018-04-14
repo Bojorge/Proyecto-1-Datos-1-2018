@@ -21,7 +21,7 @@ public class Escudo {
 	}
 	
 	public void dibujarEscudo(Graphics2D g){
-		g.setColor(Color.GREEN);
+		g.setColor(Color.GREEN.darker().darker());
 //		for(int i = 0; i < barrera.size(); i++){
 //			g.fill(barrera.get(i));
 		for(int i = 0; i < barrera.cantidad(); i++){

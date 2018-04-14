@@ -64,13 +64,16 @@ public class PantallaJuego extends MaquinaDeEstadosPadre {
 	public void dibujarMaqEstPad(Graphics2D g) {
 		g.setColor(Color.white);
 		g.setFont(fuente2);
-		g.drawString("PUNTOS: " + Puntos,800, 100);
+		g.drawString("PUNTOS >>> " + Puntos,800, 100);
 		
 		g.setColor(Color.red);
-		g.drawString("VIDAS: " + jugador.getVidas(),800, 150);
+		g.drawString("VIDAS >>> " + jugador.getVidas(),800, 150);
 		
 		g.setColor(Color.blue);			
-		g.drawString("NIVEL: ",800, 200);
+		g.drawString("NIVEL >>> ",800, 200);
+		
+		g.setColor(Color.green);			
+		g.drawString("Siguiente hilera >>> ",800, 250);
 				
 		escudo.dibujarEscudo(g);
 		jugador.dibujarJugador(g);
@@ -82,16 +85,14 @@ public class PantallaJuego extends MaquinaDeEstadosPadre {
 			String gameOver = "¡HA PERDIDO!";
 			sonidoPerdedor = new Sonido("/sonidos/risa.wav");
 			sonidoPerdedor.playSonido();
-//			int AnchoGameOver = g.getFontMetrics().stringWidth(gameOver);
 			g.drawString(gameOver,900,400);
 		}
 		
 		if (nivel.haCompletadoElNivel()) {
-			g.setColor(Color.blue.brighter());
+			g.setColor(Color.orange);
 			g.setFont(fuente1);
-			String complete = "¡HA GANADO!";
-//			int Anchocomplete = g.getFontMetrics().stringWidth(complete);
-			g.drawString(complete,900,400);
+			String complete = "PROXIMO NIVEL ++";
+			g.drawString(complete,870,400);
 		}
 	}
 

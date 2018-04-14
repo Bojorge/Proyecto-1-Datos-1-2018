@@ -8,6 +8,8 @@ public class PixelExplosion implements TipoDeExplosion{
 
 	private double[] xPos, yPos, xPosVol, yPosVol, angulo, energia;
 	
+//	apartir de una posicion crea listas con dada cantidad de elementos (pixels)
+//	
 	public PixelExplosion(double xPos, double yPos) {
 		int pixels = 35;
 		this.xPos = new double[pixels];
@@ -21,9 +23,9 @@ public class PixelExplosion implements TipoDeExplosion{
 			this.xPos[i] = xPos;
 			this.yPos[i] = yPos;
 			
-			this.xPosVol[i] = Math.random() * 3;
-			this.yPosVol[i] = Math.random() * 0.8;
-			this.energia[i] = Math.random();
+			this.xPosVol[i] = Math.random() * 3; //volumen de la explosion en x
+			this.yPosVol[i] = Math.random() * 0.8; //volumen de la explosion en y
+			this.energia[i] = Math.random(); //el largo de la trayectoria de un "pedazo" de la explosion
 			
 			Random anguloAleatorio = new Random();
 			angulo[i] = anguloAleatorio.nextInt(100) + 1;
@@ -36,6 +38,7 @@ public class PixelExplosion implements TipoDeExplosion{
 		for (int i = 0; i < xPos.length; i++) {
 			if(energia[i] >= 0.00d) {
 				g.setColor(new Color(1.0f, 1.0f, 0f, (float) energia[i]));
+				
 			} else {
 				g.setColor(Color.red);
 			}
@@ -47,8 +50,8 @@ public class PixelExplosion implements TipoDeExplosion{
 	public void actualizarTipoExplosion(double cambio) {
 		
 		for (int i = 0; i < xPos.length; i++) {
-			energia[i] -= 0.01d;
-			xPos[i] += xPosVol[i] * Math.cos(angulo[i]);
+			energia[i] -= 0.01d; //a esta cantidad aleatoria se le resta con cada ciclo
+			xPos[i] += xPosVol[i] * Math.cos(angulo[i]); //aumenta la distancia manteniendo un angulo
 			yPos[i] += yPosVol[i] * Math.cos(angulo[i]);
 		}
 	}
