@@ -2,7 +2,6 @@ package armas;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 
 import inicio.Facade;
@@ -52,11 +51,6 @@ public class Ametralladora extends TipoArmaJugador{
 			return true;
 		}
 		
-		return false;
-	}
-
-	@Override
-	public boolean colisionPolig(Polygon polig) {
 		return false;
 	}
 

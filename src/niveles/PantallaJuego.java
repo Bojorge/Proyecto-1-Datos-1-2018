@@ -16,12 +16,14 @@ import temporizador.Tempo;
 
 public class PantallaJuego extends MaquinaDeEstadosPadre {
 	private Sonido sonidoPerdedor;
+	private Sonido beep, boop;
 	private Jugador jugador;
 	private Escudo escudo;
 	private Nivel nivel;
 	private GestorBalaEnemigo gestorBalas;
 	
 	public static int Puntos = 0;
+	public static double level = 0;
 	
 	private Tempo PerdioTimer = new Tempo(180);
 	private Tempo GanoTimer = new Tempo(180);
@@ -55,6 +57,7 @@ public class PantallaJuego extends MaquinaDeEstadosPadre {
 		if (nivel.haCompletadoElNivel()) {
 			GanoTimer.tick(cambio);
 			if (GanoTimer.EventoListo()) {
+				level=Puntos/70;
 				nivel.resetNivPad();
 			}
 		}
@@ -70,7 +73,7 @@ public class PantallaJuego extends MaquinaDeEstadosPadre {
 		g.drawString("VIDAS >>> " + jugador.getVidas(),800, 150);
 		
 		g.setColor(Color.blue);			
-		g.drawString("NIVEL >>> ",800, 200);
+		g.drawString("NIVEL >>> " + level,800, 200);
 		
 		g.setColor(Color.green);			
 		g.drawString("Siguiente hilera >>> ",800, 250);
@@ -93,6 +96,10 @@ public class PantallaJuego extends MaquinaDeEstadosPadre {
 			g.setFont(fuente1);
 			String complete = "PROXIMO NIVEL ++";
 			g.drawString(complete,870,400);
+			beep = new Sonido("/sonidos/beep.wav");
+			beep.playSonido();
+			boop = new Sonido("/sonidos/boop.wav");
+			boop.playSonido();
 		}
 	}
 

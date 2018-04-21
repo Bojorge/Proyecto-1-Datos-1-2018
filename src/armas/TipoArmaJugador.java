@@ -1,7 +1,6 @@
 package armas;
 
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 
 import powerUp.Escudo;
@@ -14,7 +13,6 @@ public abstract class TipoArmaJugador {
 	public abstract void dibujarTipArmJug(Graphics2D g);
 	public abstract void actualizarTipArmJug(double cambio, Escudo escudo);
 	public abstract boolean colisionDeBala(Rectangle rect);
-	public abstract boolean colisionPolig(Polygon polig);
 	public abstract boolean destruirTipArmJug();
 	
 	protected abstract void choqueContraEscudo(Escudo escudo);

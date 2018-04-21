@@ -14,11 +14,14 @@ import javax.imageio.ImageIO;
 import armas.ArmasJugador;
 import inicio.Facade;
 import powerUp.Escudo;
+import sonido.Sonido;
 
 public class Jugador implements KeyListener{
 	
 	private final double velocidadJug = 5.0d;
 	private int vida;
+	
+	private Sonido explosion;
 	
 	private BufferedImage AnimacionJug;
 	private Rectangle rect;
@@ -106,6 +109,8 @@ public class Jugador implements KeyListener{
 	}
 	
 	public void JugadorHerido() {
+		explosion = new Sonido("/sonidos/explosion.wav");
+		explosion.playSonido();
 		setVidas(getVidas()-1);
 	}
 	

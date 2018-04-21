@@ -11,11 +11,11 @@ import powerUp.Escudo;
 public class BalasDelEnemigo extends TipoDeArmaEnemigo{
 
 	private Rectangle bala;
-	private double balaSpeed = 2.5d;
+	private double balaSpeed = 12.5d;
 	private int xPos, yPos;
 	
 	public BalasDelEnemigo(double xPos, double yPos) {
-		bala = new Rectangle((int) xPos, (int) yPos, 2, 5);
+		bala = new Rectangle((int) xPos, (int) yPos, 1, 3);
 		setxPos((int) xPos); 
 		setyPos((int) yPos); 
 	}
@@ -26,7 +26,7 @@ public class BalasDelEnemigo extends TipoDeArmaEnemigo{
 			return;
 		}
 		
-		g.setColor(Color.blue);
+		g.setColor(Color.blue.brighter());
 		g.fill(bala);
 	}
 

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 //import animacion.ListaDE;
 import armas.GestorBalaEnemigo;
 import enemigos.EnemigoBasico;
+import enemigos.EnemigoClaseA;
+import enemigos.Jefe;
 import enemigos.TipoDeEnemigo;
 import jugador.Jugador;
 import powerUp.Escudo;
@@ -18,16 +20,14 @@ public class Nivel implements NivelPadre{
 //	private ListaDE enemigos = new ListaDE();
 	private GestorBalaEnemigo gestorBalaEnemigo;
 	
-	private Sonido beep, boop;
-	private boolean beepboop;
+	private double[] xPos, yPos,angulo;
+	
 	
 	public Nivel(Jugador jugador, GestorBalaEnemigo gestorBalaEnemigo){
 		this.jugador = jugador;
 		this.gestorBalaEnemigo = gestorBalaEnemigo;
 		addEnemigos();
 		
-		beep = new Sonido("/sonidos/beep.wav");
-		boop = new Sonido("/sonidos/boop.wav");
 	}
 	
 	@Override
@@ -60,6 +60,7 @@ public class Nivel implements NivelPadre{
 		}
 		haCambiadoLaDireccion(cambio);
 		gestorBalaEnemigo.actualizarBalaEnem(cambio, escudo, jugador);
+		
 	}
 
 	@Override
@@ -83,13 +84,6 @@ public class Nivel implements NivelPadre{
 //		for(int i = 0; i < enemigos.cantidad(); i++){
 //			((TipoDeEnemigo) enemigos.getElemento(i)).cambiarDireccion(cambio);
 		}
-		if (beepboop) {
-			beepboop = false;
-			boop.playSonido();
-		} else {
-			beepboop = true;
-			beep.playSonido();
-		}
 	}
 
 	@Override
@@ -112,12 +106,19 @@ public class Nivel implements NivelPadre{
 		gestorBalaEnemigo.resetGBE();
 	}
 	
-	public void addEnemigos() {
-			for(int x = 0; x < 11; x++){
-				TipoDeEnemigo e = new EnemigoBasico(150 + (x * 60), 27, 1 , 2, gestorBalaEnemigo);
-				enemigos.add(e);
-//				enemigos.insertar(1,e);
-			}
+	public void addEnemigos() {	
+		for(int x = 0; x < 5; x++){
+			TipoDeEnemigo e = new EnemigoBasico(200 + (x * 60), 30, 1 , 2, gestorBalaEnemigo);
+			enemigos.add(e);
+//			enemigos.insertar(1,e);
+			}		
+		TipoDeEnemigo j = new Jefe(470,25,1,1,gestorBalaEnemigo);
+		enemigos.add(j);
+		for(int x = 5; x < 10; x++){
+			TipoDeEnemigo e = new EnemigoBasico(210 + (x * 60), 30, 1 , 2, gestorBalaEnemigo);
+			enemigos.add(e);
+//			enemigos.insertar(1,e);
+			}		
 	}
 
 	@Override

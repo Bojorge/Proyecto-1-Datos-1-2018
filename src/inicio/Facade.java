@@ -31,11 +31,7 @@ public class Facade extends Canvas implements Runnable {
 	
 	public static void main(String[] args) {
 		Facade mostrar = new Facade();
-		JFrame ventana = new JFrame();
-		
-//		@SuppressWarnings("unused")
-//		Estadisticas estadisticas = new Estadisticas();
-		
+		JFrame ventana = new JFrame();		
 		
 		ventana.add(mostrar);
 		ventana.pack();
@@ -81,8 +77,8 @@ public class Facade extends Canvas implements Runnable {
 				FPS = ventanas;
 				ventanas = 0;
 				System.out.println(FPS);
-				System.out.println("lml");
 			}
+			System.out.println("lml");
 
 			dibujar(buffStrat); 
 			actualizar(cambio);
@@ -115,9 +111,6 @@ public class Facade extends Canvas implements Runnable {
 	}
 
 	
-
-	
-
 	public void dibujar(BufferStrategy buffStrat) { 
 		do {
 			do {

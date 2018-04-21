@@ -27,22 +27,22 @@ public class EnemigoBasico extends TipoDeEnemigo{
 	
 	private int intervaloDeTiros;
 	private Temporizador reguladorTiempoDeTiros;
-	
+	private String imgEnemigo = "/imagenes/Invaders.png";
 	private Sonido sonidoDeExplosion;
 	
 	public EnemigoBasico(double xPos, double yPos, int filas, int columnas, GestorBalaEnemigo gestorBalaEnemigo){
 		super(gestorBalaEnemigo);
 		
-		animacionEnemigo = new Animacion(xPos, yPos, filas, columnas, 300, "/imagenes/Invaders.png");
-		animacionEnemigo.setAnchoAnimacion(35);
-		animacionEnemigo.setAlturaAnimacion(35);
+		animacionEnemigo = new Animacion(xPos, yPos, filas, columnas, 300, imgEnemigo);
+		animacionEnemigo.setAnchoAnimacion(30);
+		animacionEnemigo.setAlturaAnimacion(30);
 		animacionEnemigo.setLimiteAnimacion(2);
 		
 		this.setRect(new Rectangle((int) animacionEnemigo.getxPos(), (int) animacionEnemigo.getyPos(), animacionEnemigo.getAnchoAnimacion(), animacionEnemigo.getAlturaAnimacion()));
 		animacionEnemigo.setBucleAnimacion(true);
 		
 		reguladorTiempoDeTiros = new Temporizador();
-		intervaloDeTiros = new Random().nextInt(11000);
+		intervaloDeTiros = new Random().nextInt(7000);
 		
 		sonidoDeExplosion = new Sonido("/sonidos/explosion.wav");
 	}
@@ -61,13 +61,13 @@ public class EnemigoBasico extends TipoDeEnemigo{
 		
 		if (reguladorTiempoDeTiros.tiempoEvento(intervaloDeTiros)) {
 			getGestorBala().addBalaEnem(new BalasDelEnemigo(getEspacioDeLosEnemigos().x, getEspacioDeLosEnemigos().y));
-			intervaloDeTiros = new Random().nextInt(12000);
+			intervaloDeTiros = new Random().nextInt(7000);
 		}
 	}
 
 	@Override
 	public void cambiarDireccion(double cambio) {
-		velocidadEnemigo *= -1.15d;
+		velocidadEnemigo *= -0.8d;
 		animacionEnemigo.setxPos(animacionEnemigo.getxPos() - (cambio * velocidadEnemigo));
 		this.getEspacioDeLosEnemigos().x = (int) animacionEnemigo.getxPos();
 	

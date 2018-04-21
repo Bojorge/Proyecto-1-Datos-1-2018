@@ -16,6 +16,7 @@ public class ArmasJugador {
 	private Temporizador temporizador;
 	private GestorExplosion GestorExplosion;
 	private Sonido sonidoDisparo;
+	private Sonido explosion;
 	
 	public ArmasJugador(){
 		GestorExplosion = new GestorExplosion();
